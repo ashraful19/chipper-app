@@ -11,7 +11,10 @@ let pollPostsInterval = null
 
 onMounted(async () => {
   await postStore.getPosts()
-  favoriteStore.getFavorites()
+
+  if (!user.isGuest) {
+    favoriteStore.getFavorites()
+  }
 
   pollPostsInterval = setInterval(() => {
     postStore.getPollPosts()

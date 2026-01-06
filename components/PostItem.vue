@@ -9,6 +9,7 @@ const props = defineProps({
   }
 })
 
+const user = useUser()
 const favoriteStore = useFavoriteStore()
 const { showErrorModal } = useHelpers()
 
@@ -21,6 +22,10 @@ const isFavoritePost = computed(() => {
 })
 
 async function toggleFavoriteAuthor() {
+  if (user.isGuest) {
+    return
+  }
+
   try {
     if (isFavoriteAuthor.value) {
       await favoriteStore.unfavoriteUser(props.post.user.id)
@@ -33,6 +38,10 @@ async function toggleFavoriteAuthor() {
 }
 
 async function toggleFavoritePost() {
+  if (user.isGuest) {
+    return
+  }
+
   try {
     if (isFavoritePost.value) {
       await favoriteStore.unfavoritePost(props.post.id)
