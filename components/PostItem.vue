@@ -1,12 +1,31 @@
 <script setup>
 import { HeartIcon } from '@heroicons/vue/24/outline'
 
-defineProps({
+const props = defineProps({
   post: {
     type: Object,
     required: true
   }
 })
+
+const favoriteStore = useFavoriteStore()
+const { showErrorModal } = useHelpers()
+
+const isFavoriteAuthor = computed(() => {
+  return favoriteStore.isFavoriteUser(props.post?.user?.id)
+})
+
+async function toggleFavoriteAuthor() {
+  try {
+    if (isFavoriteAuthor.value) {
+      await favoriteStore.unfavoriteUser(props.post.user.id)
+    } else {
+      await favoriteStore.favoriteUser(props.post.user.id)
+    }
+  } catch (error) {
+    showErrorModal(error)
+  }
+}
 </script>
 
 <template>
@@ -18,8 +37,10 @@ defineProps({
       <div>
         by <strong>{{ post.user.name }}</strong>
       </div>
-      <button class="font-medium bg-blue-200 text-sm px-2 rounded-full">
-        Follow
+      <button
+        class="font-medium bg-blue-200 text-sm px-2 rounded-full"
+        @click="toggleFavoriteAuthor">
+        {{ isFavoriteAuthor ? 'Unfollow' : 'Follow' }}
       </button>
     </div>
     <p>

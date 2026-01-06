@@ -5,8 +5,12 @@ definePageMeta({
 
 const user = useUser()
 const postStore = usePostStore()
+const favoriteStore = useFavoriteStore()
 
-await postStore.getPosts()
+onMounted(async () => {
+  await postStore.getPosts()
+  favoriteStore.getFavorites()
+})
 </script>
 
 <template>
