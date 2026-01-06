@@ -1,5 +1,6 @@
 <script setup>
-import { HeartIcon } from '@heroicons/vue/24/outline'
+import { HeartIcon as HeartIconOutline } from '@heroicons/vue/24/outline'
+import { HeartIcon as HeartIconSolid } from '@heroicons/vue/24/solid'
 
 const props = defineProps({
   post: {
@@ -15,12 +16,28 @@ const isFavoriteAuthor = computed(() => {
   return favoriteStore.isFavoriteUser(props.post?.user?.id)
 })
 
+const isFavoritePost = computed(() => {
+  return favoriteStore.isFavoritePost(props.post?.id)
+})
+
 async function toggleFavoriteAuthor() {
   try {
     if (isFavoriteAuthor.value) {
       await favoriteStore.unfavoriteUser(props.post.user.id)
     } else {
       await favoriteStore.favoriteUser(props.post.user.id)
+    }
+  } catch (error) {
+    showErrorModal(error)
+  }
+}
+
+async function toggleFavoritePost() {
+  try {
+    if (isFavoritePost.value) {
+      await favoriteStore.unfavoritePost(props.post.id)
+    } else {
+      await favoriteStore.favoritePost(props.post.id)
     }
   } catch (error) {
     showErrorModal(error)
@@ -46,11 +63,15 @@ async function toggleFavoriteAuthor() {
     <p>
       {{ post.body }}
     </p>
-    <button class="bg-red-200 text-red-500 flex items-center justify-center gap-2 p-4 rounded-lg">
-      <HeartIcon
+    <button
+      class="bg-red-200 text-red-500 flex items-center justify-center gap-2 p-4 rounded-lg"
+      @click="toggleFavoritePost">
+      <HeartIconOutline v-if="!isFavoritePost"
+        class="h-6 stroke-current" />
+      <HeartIconSolid v-else
         class="h-6 stroke-current" />
       <span class="font-bold">
-        Add to my favorites
+        {{ isFavoritePost ? 'Remove from favorites' : 'Add to my favorites' }}
       </span>
     </button>
   </div>

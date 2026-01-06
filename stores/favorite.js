@@ -2,10 +2,12 @@ export const useFavoriteStore = defineStore('favorite', () => {
     const { $api } = useNuxtApp()
 
     const favoriteUserIds = ref([])
+    const favoritePostIds = ref([])
 
     async function getFavorites() {
         const { data } = await $api.get('favorites')
         favoriteUserIds.value = (data.users || []).map(user => user.id)
+        favoritePostIds.value = (data.posts || []).map(post => post.id)
     }
 
     async function favoriteUser(userId) {
@@ -18,15 +20,33 @@ export const useFavoriteStore = defineStore('favorite', () => {
         favoriteUserIds.value = favoriteUserIds.value.filter(id => id !== userId)
     }
 
+    async function favoritePost(postId) {
+        await $api.post(`posts/${postId}/favorite`)
+        favoritePostIds.value.push(postId)
+    }
+
+    async function unfavoritePost(postId) {
+        await $api.delete(`posts/${postId}/favorite`)
+        favoritePostIds.value = favoritePostIds.value.filter(id => id !== postId)
+    }
+
     function isFavoriteUser(userId) {
         return favoriteUserIds.value.includes(userId)
     }
 
+    function isFavoritePost(postId) {
+        return favoritePostIds.value.includes(postId)
+    }
+
     return {
         favoriteUserIds,
+        favoritePostIds,
         getFavorites,
         favoriteUser,
         unfavoriteUser,
-        isFavoriteUser
+        isFavoriteUser,
+        favoritePost,
+        unfavoritePost,
+        isFavoritePost
     }
 })
