@@ -72,6 +72,7 @@ async function toggleFavoritePost() {
     <p>
       {{ post.body }}
     </p>
+    <img v-if="post.image" :src="post.image" alt="Post image" class="w-full h-auto rounded-lg">
     <button
       class="bg-red-200 text-red-500 flex items-center justify-center gap-2 p-4 rounded-lg"
       @click="toggleFavoritePost">
